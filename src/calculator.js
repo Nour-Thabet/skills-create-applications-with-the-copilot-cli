@@ -15,15 +15,48 @@
 
 function printHelp() {
   console.log("Usage: calculator.js <operation> <a> <b>");
-  console.log("Operations: add|+  sub|-  mul|*|x  div|/");
+  console.log("Operations: add|+  sub|-  mul|*|x  div|/  mod|%  pow|^  sqrt");
   console.log("Examples:");
   console.log("  node src/calculator.js add 2 3  # 5");
+  console.log("  node src/calculator.js mod 10 3  # 1");
+  console.log("  node src/calculator.js pow 2 8   # 256");
+  console.log("  node src/calculator.js sqrt 9    # 3");
   console.log("  echo \"mul 4 5\" | node src/calculator.js");
 }
 
 function parseNumber(s) {
   const n = Number(s);
   return Number.isFinite(n) ? n : null;
+}
+
+// Returns the remainder of a divided by b
+function modulo(a, b) {
+  if (!Number.isFinite(a) || !Number.isFinite(b)) {
+    throw new Error('Invalid number input');
+  }
+  if (b === 0) {
+    throw new Error('Division by zero');
+  }
+  return a % b;
+}
+
+// Returns base raised to exponent
+function power(base, exponent) {
+  if (!Number.isFinite(base) || !Number.isFinite(exponent)) {
+    throw new Error('Invalid number input');
+  }
+  return Math.pow(base, exponent);
+}
+
+// Returns the square root of n; throws for negative inputs
+function squareRoot(n) {
+  if (!Number.isFinite(n)) {
+    throw new Error('Invalid number input');
+  }
+  if (n < 0) {
+    throw new Error('Cannot compute square root of negative number');
+  }
+  return Math.sqrt(n);
 }
 
 function compute(op, a, b) {
@@ -45,6 +78,15 @@ function compute(op, a, b) {
         throw new Error('Division by zero');
       }
       return a / b;
+    case 'mod':
+    case '%':
+      return modulo(a, b);
+    case 'pow':
+    case '^':
+      return power(a, b);
+    case 'sqrt':
+      // square root is unary; use 'a' and ignore 'b'
+      return squareRoot(a);
     default:
       throw new Error('Unsupported operation: ' + op);
   }
@@ -111,7 +153,7 @@ async function main() {
 
 if (typeof module !== 'undefined' && module.exports) {
   // Export functions for testing
-  module.exports = { compute, parseNumber };
+  module.exports = { compute, parseNumber, modulo, power, squareRoot };
 }
 
 if (require.main === module) {
