@@ -109,4 +109,11 @@ async function main() {
   }
 }
 
-main();
+if (typeof module !== 'undefined' && module.exports) {
+  // Export functions for testing
+  module.exports = { compute, parseNumber };
+}
+
+if (require.main === module) {
+  main();
+}
