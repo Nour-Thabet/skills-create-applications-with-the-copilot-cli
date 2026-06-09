@@ -1,4 +1,4 @@
-const { compute } = require('../calculator');
+const { compute, modulo, power, squareRoot } = require('../calculator');
 
 describe('Calculator compute()', () => {
   test('addition using + and add', () => {
@@ -28,7 +28,7 @@ describe('Calculator compute()', () => {
   });
 
   test('unsupported operation throws', () => {
-    expect(() => compute('pow', 2, 3)).toThrow(/Unsupported operation/);
+    expect(() => compute('unknown', 2, 3)).toThrow(/Unsupported operation/);
   });
 
   test('works with floats and negative numbers', () => {
@@ -36,5 +36,32 @@ describe('Calculator compute()', () => {
     expect(compute('-', -4, -6)).toBe(2);
     expect(compute('*', -3, 2)).toBe(-6);
     expect(compute('/', 7, 2)).toBeCloseTo(3.5);
+  });
+
+  // New tests for extended operations
+  test('modulo using mod and %', () => {
+    expect(compute('mod', 5, 2)).toBe(1);
+    expect(compute('%', 5, 2)).toBe(1);
+    // behavior with negative numbers follows JS % semantics
+    expect(compute('mod', -5, 2)).toBe(-1);
+  });
+
+  test('power using pow and ^', () => {
+    expect(compute('pow', 2, 3)).toBe(8);
+    expect(compute('^', 3, 4)).toBe(81);
+    // direct function
+    expect(power(5, 0)).toBe(1);
+  });
+
+  test('square root using sqrt (unary)', () => {
+    expect(compute('sqrt', 16, 0)).toBe(4);
+    expect(compute('sqrt', 2, 0)).toBeCloseTo(Math.sqrt(2));
+    // direct function
+    expect(squareRoot(9)).toBe(3);
+  });
+
+  test('square root of negative throws', () => {
+    expect(() => compute('sqrt', -4, 0)).toThrow('Cannot compute square root of negative number');
+    expect(() => squareRoot(-1)).toThrow('Cannot compute square root of negative number');
   });
 });
